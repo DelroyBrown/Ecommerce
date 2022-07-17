@@ -14,7 +14,7 @@
     {% endblock extracss %}
     {% block extrajs %}
     {% endblock extrajs %}
-    <title>Ecommerce</title>
+    <title>Ecommerce {% block extra_title %}{% endblock extra_title %}</title>
     {% block corecss %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
@@ -33,16 +33,12 @@
 </head>
 
 <body>
-    <h1>Hello, world! {% block extra_title %}{% endblock extra_title %}</h1>
+    <header class="container-fluid fixed-top">
 
-</body>
-
-<header class="container-fluid fixed-top">
-
-    {% if messages %}
-    <div class="message-container">
+        {% if messages %}
         <div class="message-container">
-            {% for message in messages %}
+            <div class="message-container">
+                <!-- {% for message in messages %}
             {% with message.level as level %}
             {% if level == 40 %}
             {% include 'includes/toasts/toast_error.html' %}
@@ -54,36 +50,35 @@
             {% include 'includes/toasts/toast_info.html' %}
             {% endif %}
             {% endwith %}
-            {% endfor %}
+            {% endfor %} -->
+            </div>
         </div>
-    </div>
-    {% endif %}
+        {% endif %}
 
 
-    {% include 'includes/header.html' %}
-    {% block page_header %}
-    {% endblock page_header %}
+        {% comment %} {% include 'includes/header.html' %} {% endcomment %}
+        {% block page_header %}
+        {% endblock page_header %}
 
-    {% block content %}
-    {% endblock content %}
+        {% block content %}
+        {% endblock content %}
 
-    {% include 'includes/footer.html' %}
+        {% comment %} {% include 'includes/footer.html' %} {% endcomment %}
 
-    {% block postloadjs %}
-    <script type="text/javascript">
-        $('.toast').toast('show');
-    </script>
-    {% endblock postloadjs %}
-
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('.dropdown-toggle').dropdown();
-        });
-    </script>
+        {% block postloadjs %}
+        <script type="text/javascript">
+            $('.toast').toast('show');
+        </script>
+        {% endblock postloadjs %}
 
 
-    </body>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.dropdown-toggle').dropdown();
+            });
+        </script>
 
+
+</body>
 
 </html>
