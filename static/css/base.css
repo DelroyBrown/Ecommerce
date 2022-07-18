@@ -39,8 +39,7 @@ body {
 
 .shop-now-button:hover,
 .shop-now-button:active,
-.shop-now-button:focus
-.btn-black:hover,
+.shop-now-button:focus .btn-black:hover,
 .btn-black:active,
 .btn-black:focus {
     background: #222;
@@ -91,4 +90,12 @@ body {
     }
 }
 
+@media (max-width: 991px) {
+    .header-container {
+        padding-top: 116px;
+    }
 
+    body {
+        height: calc(100vh - 116px);
+    }
+}
