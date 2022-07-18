@@ -55,6 +55,10 @@ body {
     color: #000 !important;
 }
 
+.bg-black {
+    background: #000 !important;
+}
+
 /* MEDIA QUERIES */
 
 @media (min-width: 1200px) {
