@@ -32,14 +32,29 @@ body {
     min-width: 260px;
 }
 
-.btn-blck {
+.btn-black {
     background: black;
     color: white;
 }
 
+.btn-outline-black {
+    background: white;
+    color: black !important;
+    border: 1px solid black;
+
+}
+
+.btn-outline-black:hover,
+.btn-outline-black:active,
+.btn-outline-black:focus {
+    background: black;
+    color: white !important;
+}
+
 .shop-now-button:hover,
 .shop-now-button:active,
-.shop-now-button:focus .btn-black:hover,
+.shop-now-button:focus,
+.btn-black:hover,
 .btn-black:active,
 .btn-black:focus {
     background: #222;
