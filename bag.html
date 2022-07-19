@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load bag_tools %}
+{% load static %}
+
+{% block page_header %}
+<div class="container header-container">
+    <div class="row">
+        <div class="col"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% for y in global_styles %}
+<div class="{% if y.do_not_display %}
+do-not-display {% else %} overlay {% endif %}" style="background-color: {{ y.base_background_color }} !important;">
+</div>
+{% endfor global_styles %}
+<div class="container mb-2 mt-5">
+    <div class="row">
+        <div class="col">
+            <hr>
+            {% for y in global_styles %}
+            <h2 class="{% if y.do_not_display %}
+            do-not-display {% else %} logo-font mb-4 {% endif %}" style="color: {{ y.base_font_color }};">
+                Shopping Bag
+            </h2>
+            {% endfor global_styles %}
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            {% if bag_items %}
+            <div class="table-responsive rounded">
+                <table class="table table-sm table-borderless">
+                    {% for y in global_styles %}
+                    <thead class="{% if y.do_not_display %}
+                    do-not-display {% else %} text-black {% endif %}"
+                        style="color: {{ y.base_font_color }} !important;">
+                        <tr>
+                            <th scope="col">Product Info</th>
+                            <th scope="col"></th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Subtotal</th>
+                        </tr>
+                    </thead>
+                    {% endfor global_styles %}
+                    {% for item in bag_items %}
+                    {% for y in global_styles %}
+                    <tr class="{% if y.do_not_display %}
+                    do-not-display {% else %} {% endif %}" style="color: {{ y.base_font_color }} !important;">
+                        <td class="p-3 w-25">
+                            {% if item.product.main_product_image %}
+                            <img class="img-fluid rounded" src="{{ item.product.main_product_image.url }}"
+                                alt="{{ item.product.name }}">
+                            {% else %}
+                            <img class="img-fluid rounded" src="{{ MEDIA_URL }}noimage.png"
+                                alt="{{ item.product.name }}">
+                            {% endif %}
+                        </td>
+                        <td class="py-3">
+                            <p class="my-0"><strong>{{ item.product.name }}</strong></p>
+                            <p class="my-0"><strong>Size:
+                                </strong>{% if item.product.has_sizes %}{{ item.size|upper }}{% else %}N/A{% endif %}
+                            </p>
+                            <p class="my-0 small text-muted">SKU: {{ item.product.sku|upper }}</p>
+                        </td>
+                        <td class="py-3">
+                            <p class="my-0">£{{ item.product.price }}</p>
+                        </td>
+                        <td class="py-3 w-25">
+                            <form class="form update-form" method="POST" action="{% url 'adjust_bag' item.item_id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {% for x in products_page_customisation %}
+                                            <button
+                                                class="{% if x.do_not_display %}
+                                            do-not-display {% else %} decrement-qty btn btn-black rounded-0 {% endif %}"
+                                                style="background-color: {{ x.product_quantity_button_background_color }} !important;"
+                                                data-item_id="{{ item.item_id }}" id="decrement-qty_{{ item.item_id }}">
+                                                <span class="{% if x.do_not_display %}
+                                                do-not-display {% else %} icon {% endif %}"
+                                                    style="color: {{ x.product_quantity_button_icon_color }} !important;">
+                                                    <i class="fas fa-minus fa-sm"></i>
+                                                </span>
+                                            </button>
+                                            {% endfor %}
+                                        </div>
+                                        <input class="form-control form-control-sm qty_input" type="number"
+                                            name="quantity" value="{{ item.quantity }}" min="1" max="99"
+                                            data-item_id="{{ item.item_id }}" id="id_qty_{{ item.item_id }}">
+
+                                        <div class="input-group-append">
+                                            {% for x in products_page_customisation %}
+
+                                            <button
+                                                class="{% if x.do_not_display %}
+                                            do-not-display {% else %} increment-qty btn btn-black rounded-0 {% endif %}"
+                                                style="background-color: {{ x.product_quantity_button_background_color }} !important;"
+                                                data-item_id="{{ item.item_id }}" id="increment-qty_{{ item.item_id }}">
+                                                <span class="{% if x.do_not_display %}
+                                                do-not-display {% else %} icon {% endif %}"
+                                                    style="color: {{ x.product_quantity_button_icon_color }} !important;">
+                                                    <i class="fas fa-plus fa-sm"></i>
+                                                </span>
+                                            </button>
+                                            {% endfor %}
+
+                                        </div>
+
+                                        {% if item.product.has_sizes %}
+                                        <input type="hidden" name="product_size" value="{{ item.size }}">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </form>
+                            <a class="update-link text-info"><small>Update</small></a>
+                            <a class="remove-item text-danger float-right" id="remove_{{ item.item_id }}"
+                                data-product_size="{{ item.size }}"><small>Remove</small></a>
+                        </td>
+                        <td class="py-3">
+                            <p class="my-0">£{{ item.product.price | calc_subtotal:item.quantity }}</p>
+                        </td>
+                    </tr>
+                    {% endfor global_styles %}
+                    {% endfor %}
+                    <tr>
+
+
+                        {% for y in global_styles %}
+                        <td colspan="5" class="{% if y.do_not_display %}
+                        do-not-display {% else %} pt-5 text-right {% endif %}"
+                            style="color: {{ y.base_font_color }} !important;">
+                            <h6><strong>Bag Total: £{{ total|floatformat:2 }}</strong></h6>
+                            <h6>Delivery: £{{ delivery|floatformat:2 }}</h6>
+                            <h4 class="mt-4"><strong>Grand Total: £{{ grand_total|floatformat:2 }}</strong></h4>
+                            {% if free_delivery_delta > 0 %}
+                            <p class="mb-1 text-danger">
+                                You could get free delivery by spending just <strong>£{{ free_delivery_delta }}</strong>
+                                more!
+                            </p>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right">
+                            {% for y in global_styles %}
+                            <a href="{% url 'products' %}" class="{% if y.do_not_display %}
+                            do-not-display {% else %} btn btn-outline-black rounded-0 btn-lg {% endif %}"
+                                style="background-color: {{ y.secondary_button_color }};">
+                                <span class="icon">
+                                    <i class="{% if y.do_not_display %}
+                                    do-not-display {% else %} fas fa-chevron-left {% endif %}"
+                                        style="color: {{ y.secondary_button_text_color }};"></i>
+                                </span>
+                                <span class="{% if y.do_not_display %}
+                                do-not-display {% else %} text-uppercase {% endif %}"
+                                    style="color: {{ y.secondary_button_text_color }};">Keep Shopping</span>
+                            </a>
+
+                            <a href="{% url 'checkout' %}" class="{% if y.do_not_display %}
+                            do-not-display {% else %} btn {{ y.action_button_border }} rounded-0 btn-lg {% endif %}"
+                                style="background-color: {{ y.action_button_color }};">
+                                <span class="{% if y.do_not_display %}
+                                do-not-display {% else %} text-uppercase {% endif %}"
+                                    style="color: {{ y.action_button_text_color }};">
+                                    Secure Checkout
+                                </span>
+                                <span class="icon">
+                                    <i class="{% if y.do_not_display %}
+                                    do-not-display {% else %} fas fa-lock {% endif %}"
+                                        style="color: {{ y.action_button_text_color }};"></i>
+                                </span>
+                            </a>
+                            {% endfor global_styles %}
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% else %}
+            {% for y in global_styles %}
+
+            <p class="{% if y.do_not_display %}
+            do-not-display {% else %} lead mb-5 {% endif %}" style="color: {{ y.base_font_color }};">
+                Your bag is empty.
+            </p>
+            <a href="{% url 'products' %}" class="{% if y.do_not_display %}
+            do-not-display {% else %} btn btn-outline-black rounded-0 btn-lg {% endif %}"
+                style="background-color: {{ y.action_button_color }};">
+                <span class="icon">
+                    <i class="{% if y.do_not_display %}
+                    do-not-display {% else %} fas fa-chevron-left {% endif %}"
+                        style="color: {{ y.action_button_text_color }} !important;"></i>
+                </span>
+                <span class="{% if y.do_not_display %}
+                do-not-display {% else %} text-uppercase {% endif %}"
+                    style="color: {{ y.primary_button_text_color }} !important;">Keep Shopping</span>
+            </a>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% include 'includes/footer.html' %}
+{% endblock %}
+
+{% block postloadjs %}
+{{ block.super }}
+{% include 'products/includes/quantity_input_script.html' %}
+
+<script type="text/javascript">
+    // Update quantity on click
+    $('.update-link').click(function (e) {
+        var form = $(this).prev('.update-form');
+        form.submit();
+    })
+
+    // Remove item and reload on click
+    $('.remove-item').click(function (e) {
+        var csrfToken = "{{ csrf_token }}";
+        var itemId = $(this).attr('id').split('remove_')[1];
+        var size = $(this).data('product_size');
+        var url = `/bag/remove/${itemId}/`;
+        var data = {
+            'csrfmiddlewaretoken': csrfToken,
+            'product_size': size
+        };
+
+        $.post(url, data)
+            .done(function () {
+                location.reload();
+            });
+    });
+</script>
+{% endblock postloadjs %}
