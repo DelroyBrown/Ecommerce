@@ -33,7 +33,7 @@ class OrderAdmin(admin.ModelAdmin):
         'delivery_cost',
         'order_total',
         'grand_total',
-        'orignal_bag',
+        'original_bag',
         'stripe_pid',
     )
 
